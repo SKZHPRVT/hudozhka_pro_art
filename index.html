@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DrawMaster — Школа рисования</title>
+    
+    <!-- Telegram WebApp API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- ЭКРАН 1: ГЛАВНОЕ МЕНЮ -->
+        <section id="screen-menu" class="screen active">
+            <header class="header">
+                <h1>🎨 DrawMaster</h1>
+                <p class="subtitle">От наброска до шедевра</p>
+            </header>
+            
+            <nav class="menu-grid">
+                <button class="menu-card" data-module="animals">
+                    <span class="icon">🦁</span>
+                    <span class="title">Рисуем животных</span>
+                    <span class="desc">50 пошаговых уроков</span>
+                </button>
+                
+                <button class="menu-card" data-module="composition">
+                    <span class="icon">🖼️</span>
+                    <span class="title">Композиция</span>
+                    <span class="desc">Теория и практика</span>
+                </button>
+                
+                <button class="menu-card" data-module="academic">
+                    <span class="icon">📐</span>
+                    <span class="title">Академический рисунок</span>
+                    <span class="desc">База и форма</span>
+                </button>
+            </nav>
+        </section>
+
+        <!-- ЭКРАН 2: ГАЛЕРЕЯ УРОКОВ -->
+        <section id="screen-gallery" class="screen">
+            <header class="top-bar">
+                <button class="back-btn" data-back>←</button>
+                <h2 id="gallery-title">Уроки</h2>
+            </header>
+            <div id="gallery-grid" class="gallery-grid"></div>
+        </section>
+
+        <!-- ЭКРАН 3: ПРОСМОТР УРОКА -->
+        <section id="screen-viewer" class="screen">
+            <header class="top-bar">
+                <button class="back-btn" data-back>←</button>
+                <h2 id="viewer-title">Название</h2>
+                <button class="hint-btn" id="hint-btn">💡</button>
+            </header>
+            
+            <div class="viewer-body">
+                <div class="step-viewer">
+                    <img id="step-image" src="" alt="Шаг">
+                </div>
+                
+                <div class="step-controls">
+                    <button id="prev-step">← Назад</button>
+                    <span id="step-counter">1 / 1</span>
+                    <button id="next-step">Вперед →</button>
+                </div>
+                
+                <div class="step-thumbs" id="step-thumbs"></div>
+            </div>
+        </section>
+
+        <!-- МОДАЛКА: ПОДСКАЗКА -->
+        <div id="hint-modal" class="modal">
+            <div class="modal-content">
+                <h3>💡 Подсказка</h3>
+                <p id="hint-text"></p>
+                <button id="close-hint">Понятно</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
