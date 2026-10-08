@@ -1,9 +1,9 @@
 /* ============================================
    ЛОГИКА ПРИЛОЖЕНИЯ DrawMaster
-   Страница = один урок с 6-8 шагами
+   Страница = один урок (6-8 шагов на листе)
    ============================================ */
 
-// === Telegram WebApp ===
+// === Telegram WebApp (не блокирует работу если не в Telegram) ===
 const tg = window.Telegram?.WebApp;
 if (tg) {
     tg.ready();
@@ -13,14 +13,14 @@ if (tg) {
     }
 }
 
-// === Состояние ===
+// === Состояние приложения ===
 const state = {
     currentModule: null,
     currentItem: null,
     zoomed: false
 };
 
-// === DOM ===
+// === Хелперы ===
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
@@ -30,14 +30,16 @@ const screens = {
     viewer: $('#screen-viewer')
 };
 
-// === Навигация ===
+// === Навигация между экранами ===
 function showScreen(name) {
-    Object.values(screens).forEach(s => s.classList.remove('active'));
-    screens[name].classList.add('active');
+    Object.values(screens).forEach(s => s && s.classList.remove('active'));
+    if (screens[name]) {
+        screens[name].classList.add('active');
+    }
     window.scrollTo(0, 0);
 }
 
-// === Меню ===
+// === Главное меню → клики по карточкам ===
 $$('.menu-card').forEach(card => {
     card.addEventListener('click', () => {
         const moduleKey = card.dataset.module;
@@ -45,7 +47,7 @@ $$('.menu-card').forEach(card => {
     });
 });
 
-// === Галерея ===
+// === Открыть галерею уроков ===
 function openGallery(moduleKey) {
     const module = window.DATA[moduleKey];
     if (!module) return;
@@ -56,8 +58,15 @@ function openGallery(moduleKey) {
     const grid = $('#gallery-grid');
     grid.innerHTML = '';
 
-    if (module.items.length === 0) {
-        grid.innerHTML = '<p style="text-align:center;color:var(--hint);grid-column:1/-1;padding:40px;">Раздел в разработке 📚</p>';
+    // Если раздел пустой (композиция / академический)
+    if (!module.items || module.items.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--hint);">
+                <div style="font-size: 64px; margin-bottom: 16px;">📚</div>
+                <div style="font-size: 16px;">Раздел в разработке</div>
+                <div style="font-size: 13px; margin-top: 8px; opacity: 0.7;">Скоро здесь появятся материалы</div>
+            </div>
+        `;
         showScreen('gallery');
         return;
     }
@@ -76,87 +85,90 @@ function openGallery(moduleKey) {
     showScreen('gallery');
 }
 
-// === Открыть урок ===
+// === Открыть урок (просмотр страницы с шагами) ===
 function openViewer(item) {
     state.currentItem = item;
     state.zoomed = false;
 
     $('#viewer-title').textContent = `${item.emoji} ${item.name}`;
 
-    // Загружаем картинку-страницу
     const img = $('#step-image');
     img.src = item.page;
+    img.alt = item.name;
+    img.classList.remove('zoomed');
+
     img.onerror = () => {
-        img.src = '';
         img.alt = 'Картинка не найдена: ' + item.page;
+        img.style.opacity = '0.3';
     };
 
-    // Скрываем ненужные элементы управления шагами
-    $('#step-controls').style.display = 'none';
-    $('#step-thumbs').style.display = 'none';
-    $('#step-counter').style.display = 'none';
-    $('#prev-step').style.display = 'none';
-    $('#next-step').style.display = 'none';
-
-    // Сбрасываем зум
-    img.classList.remove('zoomed');
+    img.onload = () => {
+        img.style.opacity = '1';
+    };
 
     showScreen('viewer');
 }
 
-// === Зум по тапу ===
+// === Зум по тапу на картинку ===
 function toggleZoom() {
     const img = $('#step-image');
     state.zoomed = !state.zoomed;
     img.classList.toggle('zoomed', state.zoomed);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const img = $('#step-image');
-    if (img) {
-        img.addEventListener('click', toggleZoom);
-    }
-});
+const stepImage = $('#step-image');
+if (stepImage) {
+    stepImage.addEventListener('click', toggleZoom);
+}
 
-// === Назад ===
+// === Кнопки «Назад» ===
 $$('[data-back]').forEach(btn => {
     btn.addEventListener('click', () => {
-        if (screens.viewer.classList.contains('active')) {
+        if (screens.viewer && screens.viewer.classList.contains('active')) {
             openGallery(state.currentModule);
-        } else if (screens.gallery.classList.contains('active')) {
+        } else if (screens.gallery && screens.gallery.classList.contains('active')) {
             showScreen('menu');
         }
     });
 });
 
-// === Подсказка ===
-$('#hint-btn').addEventListener('click', () => {
-    if (!state.currentItem) return;
-    $('#hint-text').textContent = state.currentItem.hint || 'Подсказка пока не добавлена.';
-    $('#hint-modal').classList.add('active');
-});
+// === Подсказка (💡) ===
+const hintBtn = $('#hint-btn');
+if (hintBtn) {
+    hintBtn.addEventListener('click', () => {
+        if (!state.currentItem) return;
+        $('#hint-text').textContent = state.currentItem.hint || 'Подсказка пока не добавлена.';
+        $('#hint-modal').classList.add('active');
+    });
+}
 
-$('#close-hint').addEventListener('click', () => {
-    $('#hint-modal').classList.remove('active');
-});
+const closeHint = $('#close-hint');
+if (closeHint) {
+    closeHint.addEventListener('click', () => {
+        $('#hint-modal').classList.remove('active');
+    });
+}
 
-$('#hint-modal').addEventListener('click', (e) => {
-    if (e.target.id === 'hint-modal') {
-        e.target.classList.remove('active');
-    }
-});
+const hintModal = $('#hint-modal');
+if (hintModal) {
+    hintModal.addEventListener('click', (e) => {
+        if (e.target.id === 'hint-modal') {
+            e.target.classList.remove('active');
+        }
+    });
+}
 
 // === Telegram BackButton ===
-if (tg) {
+if (tg && tg.BackButton) {
     tg.BackButton.onClick(() => {
-        if (screens.viewer.classList.contains('active')) {
+        if (screens.viewer && screens.viewer.classList.contains('active')) {
             openGallery(state.currentModule);
-        } else if (screens.gallery.classList.contains('active')) {
+        } else if (screens.gallery && screens.gallery.classList.contains('active')) {
             showScreen('menu');
         }
     });
 }
 
-// === Старт ===
+// === Стартовый экран ===
 showScreen('menu');
-console.log('🎨 DrawMaster запущен! Животных:', window.DATA.animals.items.length);
+console.log('🎨 DrawMaster запущен! Животных:', window.DATA?.animals?.items?.length || 0);

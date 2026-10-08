@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DrawMaster — Школа рисования</title>
     
-    <!-- Telegram WebApp API (async — не блокирует загрузку) -->
-    <script src="https://telegram.org/js/telegram-web-app.js" async></script>
+    <!-- Telegram WebApp API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -61,6 +61,14 @@
                 <div class="step-viewer">
                     <img id="step-image" src="" alt="Шаг">
                 </div>
+                
+                <div class="step-controls">
+                    <button id="prev-step">← Назад</button>
+                    <span id="step-counter">1 / 1</span>
+                    <button id="next-step">Вперед →</button>
+                </div>
+                
+                <div class="step-thumbs" id="step-thumbs"></div>
             </div>
         </section>
 
