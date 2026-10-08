@@ -292,3 +292,30 @@ body {
     font-weight: 600;
     cursor: pointer;
 }
+
+/* ===== ЗУМ КАРТИНКИ ===== */
+#step-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+#step-image.zoomed {
+    cursor: zoom-out;
+    transform: scale(2);
+}
+
+.step-viewer {
+    overflow: auto;
+    touch-action: pinch-zoom;
+}
+
+/* Скрываем элементы управления шагами — их больше нет */
+#step-controls,
+#step-thumbs {
+    display: none !important;
+}

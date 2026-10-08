@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Preview — какая страница = какое животное</title>
+    <style>
+        body { font-family: sans-serif; background: #222; color: #fff; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        .item { background: #333; padding: 10px; border-radius: 8px; }
+        .item img { width: 100%; display: block; border-radius: 4px; }
+        .item .label { margin-top: 8px; font-size: 14px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>Страницы 09-58 — определи животных</h1>
+    <div class="grid" id="grid"></div>
+    <script>
+        const grid = document.getElementById('grid');
+        for (let i = 9; i <= 58; i++) {
+            const num = String(i).padStart(2, '0');
+            const item = document.createElement('div');
+            item.className = 'item';
+            item.innerHTML = `
+                <img src="assets/animals/raw/page-${num}.png" loading="lazy">
+                <div class="label">page-${num}</div>
+            `;
+            grid.appendChild(item);
+        }
+    </script>
+</body>
+</html>
